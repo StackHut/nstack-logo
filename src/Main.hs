@@ -3,11 +3,11 @@ import Data.Maybe
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
 
-foo :: Double
-foo = 0.52
+nHorizLerp :: Double
+nHorizLerp = 0.52
 
-bar :: Point V2 Double
-bar = 1.45
+nDiagHeight :: Point V2 Double
+nDiagHeight = 1.45
 
 main :: IO ()
 main = mainWith $ (hex <> fromJust (frontFace hex) <> fromJust (nNeg hex)) # scaleX 0.9 # lw veryThick
@@ -39,12 +39,12 @@ nNeg dia = do a <- location <$> lookupName "hex0" dia
               d <- location <$> lookupName "hex5" dia
               e <- location <$> lookupName "hex4" dia
               f <- location <$> lookupName "hex3" dia
-              let t1 = lerp foo b a
-                  t2 = lerp foo b c
-                  b1 = lerp foo e d
-                  b2 = lerp foo e f
-                  b4 = t2 - (unitY * bar)
-                  t4 = b1 + (unitY * bar)
+              let t1 = lerp nHorizLerp b a
+                  t2 = lerp nHorizLerp b c
+                  b1 = lerp nHorizLerp e d
+                  b2 = lerp nHorizLerp e f
+                  b4 = t2 - (unitY * nDiagHeight)
+                  t4 = b1 + (unitY * nDiagHeight)
                   d1 = moveTo t1 . strokeLoop . closeLine $ fromVertices [t1, b, t2, t4]
                   d2 = moveTo b1 . strokeLoop . closeLine $ fromVertices [b1, e, b2, b4]
                   --dx = moveTo f . strokeLoop . closeLine $ fromVertices [f, e, e ^+^ (a ^-^ d), f ^+^ (a ^-^ d)]
