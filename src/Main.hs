@@ -1,7 +1,17 @@
 module Main where
 import Data.Maybe
+import Data.Typeable
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
+
+-- | Coords of our hexagon
+data HexN = NE | N | NW | SW | S | SE
+  deriving (Eq, Ord, Show, Bounded, Enum, Typeable)
+
+instance IsName HexN
+
+hexPoint :: HexN -> Diagram B -> Maybe (Point V2 Double)
+hexPoint nm dia = location <$> lookupName nm dia
 
 nHorizLerp :: Double
 nHorizLerp = 0.52
@@ -12,19 +22,16 @@ nDiagHeight = 1.45
 main :: IO ()
 main = mainWith $ (hex <> fromJust (frontFace hex) <> fromJust (nNeg hex)) # scaleX 0.9 # lw veryThick
 
-hexNames :: [[String]]
-hexNames = [map (("hex" ++) . show) [0..]]
-
 hex :: Diagram B
-hex = stroke' (with & vertexNames .~ hexNames) hexTrail # centerXY
+hex = stroke' (with & vertexNames .~ [enumFrom (minBound :: HexN)]) hexTrail # centerXY
 
 hexTrail :: Trail V2 Double
 hexTrail = regPoly 6 2 # rotateBy (1/4)
 
 frontFace :: Diagram B -> Maybe (Diagram B)
-frontFace d = do a <- location <$> lookupName "hex4" d
-                 b <- location <$> lookupName "hex5" d
-                 c <- location <$> lookupName "hex0" d
+frontFace d = do a <- hexPoint S d
+                 b <- hexPoint SE d
+                 c <- hexPoint NE d
                  let d = c ^-^ b
                      e = d * 0.25
                      f = strokeLoop . closeLine $ fromVertices [a, b, b ^+^ e, a ^+^ e]
@@ -33,12 +40,12 @@ frontFace d = do a <- location <$> lookupName "hex4" d
                  return $ g <> h # fc white
 
 nNeg :: Diagram B -> Maybe (Diagram B)
-nNeg dia = do a <- location <$> lookupName "hex0" dia
-              b <- location <$> lookupName "hex1" dia
-              c <- location <$> lookupName "hex2" dia
-              d <- location <$> lookupName "hex5" dia
-              e <- location <$> lookupName "hex4" dia
-              f <- location <$> lookupName "hex3" dia
+nNeg dia = do a <- hexPoint NE dia
+              b <- hexPoint N dia
+              c <- hexPoint NW dia
+              d <- hexPoint SE dia
+              e <- hexPoint S dia
+              f <- hexPoint SW dia
               let t1 = lerp nHorizLerp b a
                   t2 = lerp nHorizLerp b c
                   b1 = lerp nHorizLerp e d
