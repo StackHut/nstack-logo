@@ -20,7 +20,7 @@ nDiagHeight :: Point V2 Double
 nDiagHeight = 1.45
 
 main :: IO ()
-main = mainWith $ (inner # clipBy clipPath <> hex) # scaleX 0.9 # lw veryThick
+main = mainWith $ (inner # clipBy clipPath <> hex) # scaleX 0.9 # lw ultraThick
   where clipPath = toPath hexTrail # centerXY
         face     = fromJust (frontFace hex)
         npart    = fromJust (nNeg hex)
