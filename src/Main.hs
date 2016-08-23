@@ -37,9 +37,9 @@ frontFace d = do a <- hexPoint S d
                  b <- hexPoint SE d
                  c <- hexPoint NE d
                  let d = c ^-^ b
-                     e = d * 0.25
+                     e = d / 3
                      f = strokeLoop . closeLine $ fromVertices [a, b, b ^+^ e, a ^+^ e]
-                     g = mconcat [moveTo a f, moveTo (a + e) f, moveTo (a + e * 2) f, moveTo (a + e * 3) f]
+                     g = mconcat [moveTo a f, moveTo (a + e) f, moveTo (a + e * 2) f] -- , moveTo (a + e * 3) f]
                      h = moveTo a . strokeLoop . closeLine $ fromVertices [a, b, c, a ^+^ d]
                  return $ g <> h # fc white
 
