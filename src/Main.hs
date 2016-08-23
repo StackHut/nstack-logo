@@ -20,7 +20,11 @@ nDiagHeight :: Point V2 Double
 nDiagHeight = 1.45
 
 main :: IO ()
-main = mainWith $ (hex <> fromJust (frontFace hex) <> fromJust (nNeg hex)) # scaleX 0.9 # lw veryThick
+main = mainWith $ (inner # clipBy clipPath <> hex) # scaleX 0.9 # lw veryThick
+  where clipPath = toPath hexTrail # centerXY
+        face     = fromJust (frontFace hex)
+        npart    = fromJust (nNeg hex)
+        inner    = face <> npart <> hex # fc white
 
 hex :: Diagram B
 hex = stroke' (with & vertexNames .~ [enumFrom (minBound :: HexN)]) hexTrail # centerXY
